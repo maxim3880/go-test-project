@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"./acronym"
-	"./bookshop"
+	"./bookstore"
 )
 
 func main() {
@@ -12,6 +12,9 @@ func main() {
 	acronym.Execute()
 	fmt.Println()
 	fmt.Println("Task 2 - Bookshop - calculate total amount for different book collection")
-	bookshop.Execute()
+	array := bookstore.Array{
+		15, 15, 10, 5, 5,
+	}
+	bookstore.Cost(array)
 	fmt.Println()
 }
