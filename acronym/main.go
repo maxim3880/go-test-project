@@ -1,9 +1,15 @@
-package main
+package acronym
 
 import (
 	"fmt"
 	"strings"
 )
+
+//Execute start of presentation task 1
+func Execute() {
+	fmt.Println(getAcronymText("portable network graphics "))
+}
+
 
 func getAcronymText(inputString string) (result string) {
 	arr := strings.Fields(inputString)
@@ -15,6 +21,3 @@ func getAcronymText(inputString string) (result string) {
 	return
 }
 
-func main() {
-	fmt.Println(getAcronymText("portable network graphics "))
-}
