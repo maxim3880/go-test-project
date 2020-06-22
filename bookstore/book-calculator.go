@@ -4,20 +4,20 @@ package bookstore
 type BookGroupCalculator struct {
 }
 
-var discountPercent = map[int]float32{
+var discountPercent = map[int]int{
 	0: 0,
 	1: 0,
-	2: 0.05,
-	3: 0.10,
-	4: 0.20,
-	5: 0.25,
+	2: 5,
+	3: 10,
+	4: 20,
+	5: 25,
 }
 
 //GetAmount implements the book store exercise.
-func (bc BookGroupCalculator) GetAmount(bookGroup Array, price float32) interface{} {
-	var sum float32 = 0.0
+func (bc BookGroupCalculator) GetAmount(bookGroup []int, price int) ( interface{}) {
+	sum := 0
 	for _, value := range bookGroup {
-		sum += float32(value) * (price - (price * discountPercent[value]))
+		sum += value * (price - ((price * discountPercent[value]) / 100))
 	}
 	return sum
 }

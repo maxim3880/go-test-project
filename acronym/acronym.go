@@ -10,7 +10,6 @@ func Execute() {
 	fmt.Println(getAcronymText("portable network graphics "))
 }
 
-
 func getAcronymText(inputString string) (result string) {
 	arr := strings.Fields(inputString)
 	for _, value := range arr {
@@ -20,4 +19,3 @@ func getAcronymText(inputString string) (result string) {
 	}
 	return
 }
-

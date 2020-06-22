@@ -13,7 +13,7 @@ func main() {
 	fmt.Println()
 	fmt.Println("Task 2 - Bookshop - calculate total amount for different book collection")
 	array := bookstore.Array{
-		15, 15, 10, 5, 5,
+		2, 2, 2, 1, 1,
 	}
 	bookstore.Cost(array)
 	fmt.Println()

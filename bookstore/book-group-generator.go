@@ -5,14 +5,13 @@ type BookGroupGenerator struct {
 }
 
 var buffer = Array{}
-var count = 0
 
 //Generate return different book groups
-func (bg BookGroupGenerator) Generate(model combinationModel) (result []Array) {
+func (bg BookGroupGenerator) Generate(maxSize int) (result []Array) {
 	result = make([]Array, 0)
-	for size := model.size; size > 0; size-- {
+	for size := maxSize; size > 0; size-- {
 		buffer = make(Array, size)
-		bg.combinationUtil(model.end, model.start, size, model.size, &result)
+		bg.combinationUtil(0, 0, size, maxSize, &result)
 	}
 	return result
 }

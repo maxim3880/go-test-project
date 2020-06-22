@@ -7,9 +7,9 @@ import (
 //Cost start of presentation task 2
 func Cost(basket Array) {
 	orderCalculator := getOrderCalculator()
-	field, ok := orderCalculator.GetAmount(basket, 8).(Order)
+	field, ok := orderCalculator.GetAmount(basket, 800).(Order)
 	if ok {
-		fmt.Printf("Min Array amount = $%0.2f ", field.TotalAmount)
+		fmt.Printf("Min Array amount = $%d ", field.TotalAmount)
 		fmt.Println("Best group combination", field.BookGroup)
 	}
 
@@ -17,8 +17,8 @@ func Cost(basket Array) {
 
 func getOrderCalculator() Calculator {
 	return &OrderBasketCalculator{
-		Calculator: &BookGroupCalculator{},
-		Generator:  &BookGroupGenerator{},
-		MaxCount:   5,
+		BookGroupCalculator: BookGroupCalculator{},
+		Generator:           &BookGroupGenerator{},
+		MaxCount:            5,
 	}
 }

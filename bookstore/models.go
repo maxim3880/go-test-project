@@ -3,7 +3,7 @@ package bookstore
 //Order represent state of purchases
 type Order struct {
 	BookGroup         Array
-	TotalAmount       float32
+	TotalAmount       int
 	PriceWithDiscount float32
 }
 
@@ -41,9 +41,3 @@ func (arr *Array) fillBySource(source Array) {
 	}
 }
 
-type combinationModel struct {
-	inputArray Array
-	start      int
-	end        int
-	size       int
-}

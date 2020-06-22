@@ -2,69 +2,53 @@ package bookstore
 
 //OrderBasketCalculator represent type of calculation logic of order
 type OrderBasketCalculator struct {
-	Calculator
+	BookGroupCalculator
 	Generator
 	MaxCount int
 }
 
+var currentPrice int = 0
+
 //GetAmount calculate sum and returm
-func (oc OrderBasketCalculator) GetAmount(basket Array, price float32) (result interface{}) {
-	minPrice := float32(basket.sum()) * price
-	combinations := oc.Generator.Generate(oc.generateModel(basket))
-	orders := oc.generateOrdersByCombination(basket, combinations)
-	for i := 0; i < len(orders); i++ {
-		orders[i].TotalAmount = oc.calculateOrderAmount(orders[i].BookGroup, price)
-		if orders[i].TotalAmount < minPrice {
-			minPrice = orders[i].TotalAmount
-			result = orders[i]
-		}
-	}
-	return result
-}
-
-func (oc OrderBasketCalculator) generateOrdersByCombination(basket Array, combinations []Array) (result []Order) {
-	result = make([]Order, 0)
-	for i := 0; i < len(combinations); i++ {
-		basketMask := Array{}
-		basketMask.fillBySource(basket)
-		basketMask.subtract(combinations[i])
-		group := make([]Array, 0)
-		oc.findAllCombinationByMask(combinations, combinations[i].sum(), basketMask, basketMask.sum(), &group)
-		for _, value := range group {
-			order := Order{BookGroup: value}
-			result = append(result, order)
-		}
-	}
-	return result
-}
-
-func (oc OrderBasketCalculator) calculateOrderAmount(bookGroup Array, price float32) (totalAmount float32) {
-	totalAmount, _ = oc.Calculator.GetAmount(bookGroup, price).(float32)
-	return totalAmount
-}
-
-func (oc OrderBasketCalculator) generateModel(combinations Array) combinationModel {
-	return combinationModel{
-		inputArray: combinations,
-		start:      0,
-		end:        0,
-		size:       oc.MaxCount,
+func (oc OrderBasketCalculator) GetAmount(basket Array, price int) interface{} {
+	currentPrice = price
+	combinations := oc.Generator.Generate(oc.MaxCount)
+	minCostCombination, amount := oc.generateOrdersByCombination(basket, combinations)
+	return Order{
+		BookGroup:   minCostCombination,
+		TotalAmount: amount,
 	}
 }
 
-var currentCombinations = Array{}
+func (oc OrderBasketCalculator) generateOrdersByCombination(basket Array, combinations []Array) (result Array, minAmount int) {
+	minAmount = basket.sum() * currentPrice
+	oc.findAllCombinationByMask(combinations, Array{}, basket, &minAmount, &result)
+	return result, minAmount
+}
 
-func (oc OrderBasketCalculator) findAllCombinationByMask(combinations []Array, useBooksCount int, basketMask Array, elementCount int, group *[]Array) {
-	currentCombinations = append(currentCombinations, useBooksCount)
-	if elementCount == 0 {
-		(*group) = append(*group, currentCombinations)
-		currentCombinations = Array{}
+func (oc OrderBasketCalculator) calculateOrderAmount(bookGroup []int, price int) int {
+	return oc.BookGroupCalculator.GetAmount(bookGroup, price).(int)
+}
+
+func (oc OrderBasketCalculator) findAllCombinationByMask(combinations []Array, currentCombinations Array, basket Array, minAmount *int, group *Array) {
+	if basket.sum() == 0 {
+		(*minAmount) = oc.calculateOrderAmount(currentCombinations, currentPrice)
+		(*group) = currentCombinations
 		return
 	}
 	for i := 0; i < len(combinations); i++ {
-		if basketMask.isArrayAcceptByMask(combinations[i]) {
-			basketMask.subtract(combinations[i])
-			oc.findAllCombinationByMask(combinations, combinations[i].sum(), basketMask, basketMask.sum(), group)
+		if basket.isArrayAcceptByMask(combinations[i]) {
+			bookGroups := Array{}
+			bookGroups = append(bookGroups, currentCombinations...)
+			bookGroups = append(bookGroups, combinations[i].sum())
+			if oc.calculateOrderAmount(bookGroups, currentPrice) <= (*minAmount) {
+				basketMask := Array{}
+				basketMask = append(basketMask, basket...)
+				basketMask.subtract(combinations[i])
+				oc.findAllCombinationByMask(combinations, bookGroups, basketMask, minAmount, group)
+			} else {
+				return
+			}
 		}
 	}
 }
